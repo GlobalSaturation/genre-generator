@@ -23,13 +23,21 @@ body {
 	background-color: white;
 	width: 100px;
 	height: 110px;
-	/*overflow: hidden;*/
+	overflow: hidden;
 	border-radius: 5px;
 	margin: 5px;
 }
 
 .boxes {
 	transition: transform 1s ease-in-out;
+}
+
+.box {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	font-size: 1rem;
 }
 
 .buttons {
