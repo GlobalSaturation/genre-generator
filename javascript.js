@@ -32,11 +32,16 @@ const genres = [
 'Survival', 
 'Apocalypse'
 ];
+
 //get array of all 'doors' class elements
 const doors = document.querySelectorAll('.door');
+let previousResults = [];
 
 document.querySelector('#spinner').addEventListener('click', () => spin());
-document.querySelector('#reseter').addEventListener('click', () => init());
+document.querySelector('#reseter').addEventListener('click', () => {
+	previousResults = [];
+	init();
+});
 
 function init(firstInit = true, item_sets = 1, duration_seconds = 1) {
 	console.log(firstInit);
@@ -65,6 +70,13 @@ function init(firstInit = true, item_sets = 1, duration_seconds = 1) {
 				arr.push(...genres);
 			}
 			pool.push(...shuffle(arr));
+			let lastIndex = pool.at(-1);
+
+			//reroll if the result is not unique
+			while (previousResults.includes(lastIndex)) {
+				pool.push(...shuffle(arr));
+			}
+			previousResults.push(lastIndex);
 
 			boxesClone.addEventListener(
 				'transitionstart',
@@ -115,11 +127,11 @@ async function spin() {
 
 	for (const door of doors) {
 		const boxes = door.querySelector('.boxes');
-		const duration = parseInt(boxes.style.transitionDuration);
+		const delayTime = 300;
 		//set the boxes loose
 		boxes.style.transform = 'translateY(0)';
 		//create a delay for each spinning door
-		await new Promise((resolve) => setTimeout(resolve, duration * 100));
+		await new Promise((resolve) => setTimeout(resolve, delayTime));
 	}
 }
 
