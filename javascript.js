@@ -38,45 +38,34 @@ const doors = document.querySelectorAll('.door');
 let previousResults = [];
 
 document.querySelector('#spinner').addEventListener('click', () => spin());
-document.querySelector('#reseter').addEventListener('click', () => {
-	previousResults = [];
-	init();
-});
 
-function init(firstInit = true, item_sets = 1, duration_seconds = 1) {
-	console.log(firstInit);
+function init(item_sets = 1, duration_seconds = 1) {
 	for (const door of doors) {
-		//exit early if .spinned is 1
-		if (firstInit == true) {
-			door.dataset.spinned = '0';
-		} else if (door.dataset.spinned === '1') {
-			return;
+		door.dataset.spinned = '0';
+		if (door.dataset.prevItem == undefined) {
+			door.dataset.prevItem = '?';
 		}
-		
+
 		const boxes = door.querySelector('.boxes');
 		//our clone handles all of the transition stuff (like a body double),
 		//and then at the end, we will swap back to our original box
 		const boxesClone = boxes.cloneNode(false);
-		const pool = ['?'];
+		const pool = [door.dataset.prevItem];
 
+		//create an array of all the genres a minimum of one time
+		//if 'item_sets' is larger, this creates more duplicates in the array
+		const arr = [];
+		for (let i = 0; i < item_sets; i++) {
+			arr.push(...genres);
+		}
+		pool.push(...shuffle(arr));
+		let resultItem = pool.at(-1);
 
-		if (firstInit == false) {
-			let loop_count = Math.max(1, item_sets);
-
-			//create an array of all the genres a minimum of one time
-			//if 'item_sets' is larger, this creates more duplicates in the array
-			const arr = [];
-			for (let i = 0; i < loop_count; i++) {
-				arr.push(...genres);
-			}
+		//reroll if the result is not unique
+		while (previousResults.includes(resultItem)) {
 			pool.push(...shuffle(arr));
-			let lastIndex = pool.at(-1);
-
-			//reroll if the result is not unique
-			while (previousResults.includes(lastIndex)) {
-				pool.push(...shuffle(arr));
-			}
-			previousResults.push(lastIndex);
+		}
+		previousResults.push(resultItem);
 
 			boxesClone.addEventListener(
 				'transitionstart',
@@ -92,6 +81,10 @@ function init(firstInit = true, item_sets = 1, duration_seconds = 1) {
 				//run a function for all the child boxes attached
 				//to the boxesClone, and tell them to remove themselves
 				function() {
+					//make it so that the last item of this pool becomes the first item of the next pool
+					//for seamless transition between generations
+					door.dataset.prevItem = resultItem;
+					door.dataset.spinned = '0';
 					this.querySelectorAll('.box').forEach((box, index) => {
 						if (index > 0) {
 							this.removeChild(box);
@@ -100,7 +93,6 @@ function init(firstInit = true, item_sets = 1, duration_seconds = 1) {
 				},
 				{ once: true }
 			);
-		}
 
 		//create new box nodes, fill it with an item from the pool,
 		//then attach to the boxesClone
@@ -113,7 +105,7 @@ function init(firstInit = true, item_sets = 1, duration_seconds = 1) {
 			boxesClone.appendChild(box);
 		}
 
-		boxesClone.style.transitionDuration = `${Math.max(1, duration_seconds)}s`;
+		boxesClone.style.transitionDuration = `${duration_seconds}s`;
 		//move boxesClone offscreen
 		boxesClone.style.transform = `translateY(-${door.clientHeight * (pool.length - 1)}px)`;
 		//replace box with boxesClone
@@ -121,9 +113,24 @@ function init(firstInit = true, item_sets = 1, duration_seconds = 1) {
 	}
 }
 
+function ifAnySpinning() {
+	for (const door of doors) {
+		if (door.dataset.spinned == '1') {
+			return true;
+		}
+	}
+	return false;
+}
+
 async function spin() {
+	//prevent button spam
+	if (ifAnySpinning()) {
+		return;
+	}
+
+	previousResults = [];
 	//set up the boxes for transition
-	init(false, 1, 4);
+	init(1, 4);
 
 	for (const door of doors) {
 		const boxes = door.querySelector('.boxes');
@@ -131,7 +138,7 @@ async function spin() {
 		//set the boxes loose
 		boxes.style.transform = 'translateY(0)';
 		//create a delay for each spinning door
-		await new Promise((resolve) => setTimeout(resolve, delayTime));
+		await new Promise((resolve) => {setTimeout(resolve, delayTime)});
 	}
 }
 
