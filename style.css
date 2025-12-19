@@ -15,7 +15,7 @@ body {
 	align-items: center;
 }
 
-.doors {
+#door-container {
 	display: flex;
 }
 

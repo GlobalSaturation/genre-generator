@@ -8,7 +8,7 @@ const genres = [
 'Thriller',
 'Detective',
 'LGBTQ+',
-'Historical Drama',
+'Historical fiction',
 'Memoir',
 'True Crime',
 'Dystopian',
@@ -33,8 +33,7 @@ const genres = [
 'Apocalypse'
 ];
 
-//get array of all 'doors' class elements
-const doors = document.querySelectorAll('.door');
+let doors;
 let previousResults = [];
 
 document.querySelector('#spinner').addEventListener('click', () => spin());
@@ -50,7 +49,6 @@ function init(item_sets = 1, duration_seconds = 1) {
 		//our clone handles all of the transition stuff (like a body double),
 		//and then at the end, we will swap back to our original box
 		const boxesClone = boxes.cloneNode(false);
-		const pool = [door.dataset.prevItem];
 
 		//create an array of all the genres a minimum of one time
 		//if 'item_sets' is larger, this creates more duplicates in the array
@@ -58,44 +56,48 @@ function init(item_sets = 1, duration_seconds = 1) {
 		for (let i = 0; i < item_sets; i++) {
 			arr.push(...genres);
 		}
+		let pool = [door.dataset.prevItem];
 		pool.push(...shuffle(arr));
 		let resultItem = pool.at(-1);
 
 		//reroll if the result is not unique
 		while (previousResults.includes(resultItem)) {
+			//console.log("duplicate detected");
+			pool = [door.dataset.prevItem];
 			pool.push(...shuffle(arr));
+			resultItem = pool.at(-1);
 		}
 		previousResults.push(resultItem);
 
-			boxesClone.addEventListener(
-				'transitionstart',
-				function() {
-					//have every box clone set itself to spinning when the time comes
-					door.dataset.spinned = '1';
-				},
-				{ once: true }
-			);
+		boxesClone.addEventListener(
+			'transitionstart',
+			function() {
+				//have every box clone set itself to spinning when the time comes
+				door.dataset.spinned = '1';
+			},
+			{ once: true }
+		);
 
-			boxesClone.addEventListener(
-				'transitionend',
-				//run a function for all the child boxes attached
-				//to the boxesClone, and tell them to remove themselves
-				function() {
-					//make it so that the last item of this pool becomes the first item of the next pool
-					//for seamless transition between generations
-					door.dataset.prevItem = resultItem;
-					door.dataset.spinned = '0';
-					this.querySelectorAll('.box').forEach((box, index) => {
-						if (index > 0) {
-							this.removeChild(box);
-						}
-					});
-				},
-				{ once: true }
-			);
+		boxesClone.addEventListener(
+			'transitionend',
+			//run a function for all the child boxes attached
+			//to the boxesClone, and tell them to remove themselves
+			function() {
+				//make it so that the last item of this pool becomes the first item of the next pool
+				//for seamless transition between generations
+				door.dataset.prevItem = resultItem;
+				door.dataset.spinned = '0';
+				this.querySelectorAll('.box').forEach((box, index) => {
+					if (index > 0) {
+						this.removeChild(box);
+					}
+				});
+			},
+			{ once: true }
+		);
 
 		//create new box nodes, fill it with an item from the pool,
-		//then attach to the boxesClone
+			//then attach to the boxesClone
 		for (let i = pool.length - 1; i >= 0; i--) {
 			const box = document.createElement('div');
 			box.classList.add('box');
@@ -135,10 +137,12 @@ async function spin() {
 	for (const door of doors) {
 		const boxes = door.querySelector('.boxes');
 		const delayTime = 300;
+		//checkpoint here to make sure the browser will render the upcoming animation
+		await new Promise((resolve) => setTimeout(resolve, 0));
 		//set the boxes loose
 		boxes.style.transform = 'translateY(0)';
 		//create a delay for each spinning door
-		await new Promise((resolve) => {setTimeout(resolve, delayTime)});
+		await new Promise((resolve) => setTimeout(resolve, delayTime));
 	}
 }
 
@@ -154,4 +158,27 @@ function shuffle([...arr]) {
 	return arr;
 }
 
-init();
+function createDoors(numDoors) {
+	let newDoors = [];
+
+	for (let i = 0; i < numDoors; i++) {
+		let door = document.createElement('div');
+		door.classList.add('door');
+		let boxes = document.createElement('div');
+		boxes.classList.add('boxes');
+		door.appendChild(boxes);
+		newDoors.push(door);
+	}
+
+	document.querySelector('#door-container').replaceChildren(...newDoors);
+	doors = document.querySelectorAll('.door');//get updated list of all doors
+	previousResults = [];
+	init();
+}
+
+let numInput = document.querySelector('#numberInput');
+numInput.addEventListener('change', () => {
+	createDoors(numInput.value);
+});
+
+createDoors(numInput.value);
