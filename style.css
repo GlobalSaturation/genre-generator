@@ -1,3 +1,15 @@
+* {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+	--clight: #ebe0ce;
+	--cmidlight: #b4aca1;
+	--cmiddle: #827b72;
+	--cdark: #25221e;
+	--caccent: #b98917;
+	--border-thickness: 3px;
+}
+
 body {
 	width: 100vw;
 	height: 100vh;
@@ -6,13 +18,14 @@ body {
 }
 
 #menu {
-	background-color: darkslategray;
+	background-color: var(--cdark);
 	width: 100%;
 	height: 100%;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	gap: 15px;
 }
 
 #door-container {
@@ -20,7 +33,8 @@ body {
 }
 
 .door {
-	background-color: white;
+	background-color: var(--cdark);
+	border: var(--border-thickness) solid var(--cmiddle);
 	width: 100px;
 	height: 110px;
 	overflow: hidden;
@@ -38,17 +52,80 @@ body {
 	align-items: center;
 	text-align: center;
 	font-size: 1rem;
+	color: var(--clight);
+	&.faded {
+		color: var(--cmiddle);
+	}
 }
 
 .buttons {
-	margin: 1rem 0 2rem 0;
+	display: flex;
+	justify-content: center;
+	gap: 8px;
 }
 
 button {
 	cursor: pointer;
 	font-size: 1.2rem;
-	margin: 0 0.2rem;
+	margin: 0;
 	border: none;
 	border-radius: 5px;
 	padding: 10px 15px;
+}
+
+#spinner {
+	background: var(--caccent);
+	color: var(--clight);
+	&:hover {
+		background: var(--clight);
+		color: var(--caccent);
+	}
+}
+
+/*-- change input button appearance --*/
+/* remove number buttons in WebKit and Blink */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* and in Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+	appearance: textfield;/* not sure whether to add this */
+}
+
+.num-input-wrapper {
+	display: flex;
+}
+
+.value-control {
+	margin: 0;
+  background: var(--clight);
+  color: #3b3b3b;
+  cursor: pointer;
+	text-align: center;
+	&:hover {
+		background: var(--cmidlight);
+	}
+	&:active {
+		background: var(--cmiddle);
+	}
+	/* shave off parts of the border radius depending on what side the button is on */
+	&[side="left"] {
+		border-top-right-radius: 0px;
+		border-bottom-right-radius: 0px;
+	}
+	&[side="right"] {
+		border-top-left-radius: 0px;
+		border-bottom-left-radius: 0px;
+	}
+}
+
+.value-input {
+	background: var(--clight);
+  margin: 0;
+	border: none;
+  text-align: center;
 }

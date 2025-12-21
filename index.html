@@ -13,7 +13,21 @@
 		</div>
 
 		<div class="buttons">
-			<input class="num-input" type="number" value="2" min="1" max="3" name="numberInput" id="numberInput">
+			<div class="num-input-wrapper">
+				<button
+					class="value-control"
+					side="left"
+					onclick="document.querySelector('#number-input').stepDown()"
+					title="Decrease value"
+					aria-label="Decrease value">-</button>
+				<input class="value-input" type="number" value="2" min="1" max="3" name="number-input" id="number-input">
+				<button
+					class="value-control"
+					side="right"
+					onclick="document.querySelector('#number-input').stepUp()"
+					title="Increase value"
+					aria-label="Increase value">+</button>
+			</div>
 			<button id="spinner">Generate</button>
 		</div>
 	</div>

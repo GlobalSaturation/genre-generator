@@ -104,6 +104,10 @@ function init(item_sets = 1, duration_seconds = 1) {
 			box.style.width = door.clientWidth + 'px';
 			box.style.height = door.clientHeight + 'px';
 			box.textContent = pool[i];
+			//add a fade effect if not first or last box
+			if (i > 0 && i < pool.length-1) {
+				box.classList.add('faded');
+			}
 			boxesClone.appendChild(box);
 		}
 
@@ -136,11 +140,22 @@ async function spin() {
 
 	for (const door of doors) {
 		const boxes = door.querySelector('.boxes');
-		const delayTime = 300;
-		//checkpoint here to make sure the browser will render the upcoming animation
+		const delayTime = 200;
+		//checkpoint here to make sure the browser will render the upcoming animations
 		await new Promise((resolve) => setTimeout(resolve, 0));
 		//set the boxes loose
 		boxes.style.transform = 'translateY(0)';
+		//define and play bouncing animation
+		door.animate(
+			[
+				{transform: 'translateY(0)'},
+				{transform: 'translateY(5px)', offset: 0.1},
+				{transform: 'translateY(0)'},
+			],
+			{
+				duration: delayTime,
+			},
+		);
 		//create a delay for each spinning door
 		await new Promise((resolve) => setTimeout(resolve, delayTime));
 	}
@@ -176,9 +191,17 @@ function createDoors(numDoors) {
 	init();
 }
 
-let numInput = document.querySelector('#numberInput');
+//set up number input stuff
+//TODO: fix glitch that allows user to manually input any number
+let numInput = document.querySelector('#number-input');
+let inputBtns = document.querySelectorAll('.value-control');
 numInput.addEventListener('change', () => {
 	createDoors(numInput.value);
+});
+inputBtns.forEach((btn) => {
+	btn.addEventListener('click', () => {
+		createDoors(numInput.value);
+	});
 });
 
 createDoors(numInput.value);
