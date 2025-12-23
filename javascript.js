@@ -128,6 +128,19 @@ function ifAnySpinning() {
 	return false;
 }
 
+function animateDoor(door, duration) {
+		door.animate(
+			[
+				{transform: 'translateY(0)'},
+				{transform: 'translateY(5px)', offset: 0.1},
+				{transform: 'translateY(0)'},
+			],
+			{
+				duration: duration,
+			},
+		);
+}
+
 async function spin() {
 	//prevent button spam
 	if (ifAnySpinning()) {
@@ -145,17 +158,7 @@ async function spin() {
 		await new Promise((resolve) => setTimeout(resolve, 0));
 		//set the boxes loose
 		boxes.style.transform = 'translateY(0)';
-		//define and play bouncing animation
-		door.animate(
-			[
-				{transform: 'translateY(0)'},
-				{transform: 'translateY(5px)', offset: 0.1},
-				{transform: 'translateY(0)'},
-			],
-			{
-				duration: delayTime,
-			},
-		);
+		animateDoor(door, delayTime);
 		//create a delay for each spinning door
 		await new Promise((resolve) => setTimeout(resolve, delayTime));
 	}
@@ -185,6 +188,10 @@ function createDoors(numDoors) {
 		newDoors.push(door);
 	}
 
+	newDoors.forEach((door) => {
+		animateDoor(door, 200);
+	});
+
 	document.querySelector('#door-container').replaceChildren(...newDoors);
 	doors = document.querySelectorAll('.door');//get updated list of all doors
 	previousResults = [];
@@ -192,12 +199,19 @@ function createDoors(numDoors) {
 }
 
 //set up number input stuff
-//TODO: fix glitch that allows user to manually input any number
 let numInput = document.querySelector('#number-input');
 let inputBtns = document.querySelectorAll('.value-control');
 numInput.addEventListener('change', () => {
-	createDoors(numInput.value);
+	let currVal = numInput.value;
+	let max = numInput.max;
+	let min = numInput.min;
+
+	//prevent inputted values outside the allowed range
+	if (currVal <= max && currVal >= min) {
+		createDoors(numInput.value);
+	}
 });
+
 inputBtns.forEach((btn) => {
 	btn.addEventListener('click', () => {
 		createDoors(numInput.value);
