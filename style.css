@@ -5,6 +5,7 @@
 	--clight: #ebe0ce;
 	--cmidlight: #b4aca1;
 	--cmiddle: #827b72;
+	--cmiddark: #585149;
 	--cdark: #25221e;
 	--caccent: #b98917;
 	--border-thickness: 3px;
@@ -15,31 +16,58 @@ body {
 	height: 100vh;
 	margin: 0;
 	padding: 0;
+	background-color: var(--cdark);
 }
 
-#menu {
-	background-color: var(--cdark);
-	width: 100%;
-	height: 100%;
+.center-wrapper {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+}
+
+#main {
+	height: 100%;
+}
+
+#menu {
+	width: min(90vw, 500px);
 	gap: 15px;
 }
 
+h1 {
+	text-align: center;
+	font-size: min(3.5rem, 12vw);
+	font-family: "DM Serif Text", serif;
+	font-weight: 400;
+	color: var(--clight);
+}
+
+#title-blob {
+	width: min(90vw, 400px);
+	height: 30px;
+	position: relative;
+	bottom: 25px;
+	margin-bottom: 10px;
+	background-color: var(--cmiddark);
+	border-radius: 100px;
+	z-index: -1;
+}
+
 #door-container {
+	width: 100%;
 	display: flex;
+	gap: 5px;
 }
 
 .door {
 	background-color: var(--cdark);
-	border: var(--border-thickness) solid var(--cmiddle);
+	border: var(--border-thickness) solid var(--cmiddark);
 	width: 100px;
 	height: 110px;
 	overflow: hidden;
 	border-radius: 5px;
-	margin: 5px;
+	flex-grow: 1;
 }
 
 .boxes {
@@ -51,7 +79,9 @@ body {
 	justify-content: center;
 	align-items: center;
 	text-align: center;
-	font-size: 1rem;
+	font-family: "Libre Baskerville", serif;
+	padding: 5px;
+	font-size: 0.9rem;
 	color: var(--clight);
 	&.faded {
 		color: var(--cmiddle);
@@ -59,24 +89,43 @@ body {
 }
 
 .buttons {
+	width: 80%;
 	display: flex;
 	justify-content: center;
-	gap: 8px;
+	gap: 5px;
 }
 
 button {
+	flex-grow: 1;
 	cursor: pointer;
-	font-size: 1.2rem;
+	font-size: 1.3rem;
 	margin: 0;
 	border: none;
 	border-radius: 5px;
-	padding: 10px 15px;
+	padding-block: 10px;
+	font-family: "Source Sans 3", sans-serif;
+}
+
+button:focus {
+	/* removes the weird blue click effect on mobile */
+	-webkit-tap-highlight-color: transparent;
 }
 
 #spinner {
+	width: 50%;
 	background: var(--caccent);
 	color: var(--clight);
-	&:hover {
+	position: relative;
+	&:active {
+		top: 3px;
+		background: var(--clight);
+		color: var(--caccent);
+	}
+}
+
+/* enable hover only for computers */
+@media (hover: hover) {
+	#spinner:hover {
 		background: var(--clight);
 		color: var(--caccent);
 	}
@@ -97,6 +146,7 @@ input[type="number"] {
 }
 
 .num-input-wrapper {
+	width: 50%;
 	display: flex;
 }
 
@@ -128,4 +178,6 @@ input[type="number"] {
   margin: 0;
 	border: none;
   text-align: center;
+	padding-inline: 10px;
+	font-size: 1rem;
 }

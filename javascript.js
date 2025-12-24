@@ -8,7 +8,7 @@ const genres = [
 'Thriller',
 'Detective',
 'LGBTQ+',
-'Historical fiction',
+'Historical Fiction',
 'Memoir',
 'True Crime',
 'Dystopian',
@@ -20,14 +20,14 @@ const genres = [
 'Western',
 'War',
 'Science',
-'Non-fiction',
+'Non-Fiction',
 'Paranormal',
-'Coming of age', 
+'Coming of Age', 
 'Folklore',
 'Biography',
 'Religion',
 'Nature',
-'Children’s literature',
+'Children’s Literature',
 'Cozy',
 'Survival', 
 'Apocalypse'
@@ -101,7 +101,6 @@ function init(item_sets = 1, duration_seconds = 1) {
 		for (let i = pool.length - 1; i >= 0; i--) {
 			const box = document.createElement('div');
 			box.classList.add('box');
-			box.style.width = door.clientWidth + 'px';
 			box.style.height = door.clientHeight + 'px';
 			box.textContent = pool[i];
 			//add a fade effect if not first or last box
